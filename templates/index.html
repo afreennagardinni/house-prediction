@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center">
+    <div class="text-center">
+        <h1 class="text-5xl font-bold text-gray-800 mb-4">
+            Welcome to House Price Predictor
+        </h1>
+        <p class="text-xl text-gray-600 mb-8">
+            Predict house prices accurately using advanced machine learning
+        </p>
+        <div class="space-x-4">
+            <a href="{{ url_for('predict') }}" class="gradient-bg text-white px-8 py-3 rounded-lg hover:shadow-lg transition inline-block">
+                Get Started
+            </a>
+            <a href="{{ url_for('register') }}" class="bg-gray-200 text-gray-800 px-8 py-3 rounded-lg hover:bg-gray-300 transition inline-block">
+                Create Account
+            </a>
+        </div>
+        
+        <div class="mt-16 grid md:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="text-4xl mb-4">📊</div>
+                <h3 class="text-xl font-semibold mb-2">ML Powered</h3>
+                <p class="text-gray-600">Random Forest model with 85%+ accuracy</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="text-4xl mb-4">🔒</div>
+                <h3 class="text-xl font-semibold mb-2">Secure</h3>
+                <p class="text-gray-600">Your data is protected and private</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="text-4xl mb-4">⚡</div>
+                <h3 class="text-xl font-semibold mb-2">Fast</h3>
+                <p class="text-gray-600">Get instant predictions in seconds</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

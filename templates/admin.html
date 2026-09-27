@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-6">
+    <!-- Header with Stats -->
+    <div class="flex flex-col lg:flex-row gap-6 mb-12">
+        <div class="flex-1">
+            <h1 class="text-4xl lg:text-5xl font-black bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-4">Admin Dashboard</h1>
+            <p class="text-xl text-gray-600">Manage predictions and analytics</p>
+        </div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 flex-0">
+            <div class="bg-gradient-to-br from-emerald-400 to-emerald-500 p-6 rounded-2xl text-white text-center shadow-xl">
+                <div class="text-3xl font-bold">{{ predictions|length }}</div>
+                <div>Total Predictions</div>
+            </div>
+            <div class="bg-gradient-to-br from-blue-400 to-blue-500 p-6 rounded-2xl text-white text-center shadow-xl">
+                <div class="text-3xl font-bold">${{ "%.2f"|format((predictions|map(attribute='prediction')|map('float')|sum)/1000000) }}M</div>
+                <div>Total Value</div>
+            </div>
+            <div class="bg-gradient-to-br from-purple-400 to-purple-500 p-6 rounded-2xl text-white text-center shadow-xl">
+                <div class="text-3xl font-bold">{{ predictions|length > 0 and predictions|first.timestamp.strftime('%H:%M') or 'N/A' }}</div>
+                <div>Latest</div>
+            </div>
+            <div class="bg-gradient-to-br from-orange-400 to-orange-500 p-6 rounded-2xl text-white text-center shadow-xl">
+                <i class="fas fa-download text-xl mb-2"></i>
+                <div>Export</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Predictions Table -->
+    <div class="bg-white/80 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden border border-white/50">
+        <div class="p-6 bg-gradient-to-r from-gray-50 to-slate-100 border-b">
+            <h2 class="text-2xl font-bold text-gray-800">Recent Predictions</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-gradient-to-r from-slate-50 to-slate-100">
+                        <th class="p-6 text-left text-lg font-bold text-gray-800 border-b">ID</th>
+                        <th class="p-6 text-left text-lg font-bold text-gray-800 border-b">Price</th>
+                        <th class="p-6 text-left text-lg font-bold text-gray-800 border-b">Area</th>
+                        <th class="p-6 text-left text-lg font-bold text-gray-800 border-b">Beds/Baths</th>
+                        <th class="p-6 text-left text-lg font-bold text-gray-800 border-b">Stories/Parking</th>
+                        <th class="p-6 text-left text-lg font-bold text-gray-800 border-b">Features</th>
+                        <th class="p-6 text-left text-lg font-bold text-gray-800 border-b">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pred in predictions %}
+                    <tr class="border-b hover:bg-gray-50 transition-all duration-200">
+                        <td class="p-6 font-mono text-sm font-bold text-indigo-600">{{ pred.id }}</td>
+                        <td class="p-6">
+                            <span class="text-2xl font-black bg-gradient-to-r from-emerald-500 to-emerald-600 bg-clip-text text-transparent">${{ "%.0f"|format(pred.prediction) }}</span>
+                        </td>
+                        <td class="p-6">
+                            <span class="text-lg font-semibold text-gray-800">{{ "%.0f"|format(pred.area) }} sqft</span>
+                        </td>
+                        <td class="p-6 text-lg font-semibold">{{ pred.bedrooms }} Beds / {{ pred.bathrooms }} Baths</td>
+                        <td class="p-6 text-lg font-semibold">{{ pred.stories }} / {{ pred.parking }}</td>
+                        <td class="p-6 text-sm">
+                            <div class="flex flex-wrap gap-1">
+                                {% if pred.airconditioning %} <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">AC</span> {% endif %}
+                                {% if pred.mainroad %} <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Mainroad</span> {% endif %}
+                                {% if pred.prefarea %} <span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">Prime</span> {% endif %}
+                            </div>
+                        </td>
+                        <td class="p-6 text-sm text-gray-500 font-mono">{{ pred.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="p-12 text-center text-gray-500 text-xl">No predictions yet. Make one!</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid md:grid-cols-3 gap-6 mt-12">
+        <a href="/predict" class="group bg-gradient-to-br from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 p-8 rounded-3xl text-white text-center shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-2">
+            <i class="fas fa-calculator text-4xl mb-4 block group-hover:scale-110 transition-transform"></i>
+            <h3 class="text-2xl font-bold mb-2">New Prediction</h3>
+            <p>Test house valuation</p>
+        </a>
+        <div class="bg-gradient-to-br from-orange-500 to-red-600 p-8 rounded-3xl text-white text-center shadow-2xl hover:shadow-3xl transition-all duration-300 cursor-pointer">
+            <i class="fas fa-download text-4xl mb-4 block"></i>
+            <h3 class="text-2xl font-bold mb-2">Export CSV</h3>
+            <p>Download all data</p>
+        </div>
+        <div class="bg-gradient-to-br from-purple-500 to-pink-600 p-8 rounded-3xl text-white text-center shadow-2xl hover:shadow-3xl transition-all duration-300">
+            <i class="fas fa-chart-bar text-4xl mb-4 block"></i>
+            <h3 class="text-2xl font-bold mb-2">Analytics</h3>
+            <p>View charts</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
